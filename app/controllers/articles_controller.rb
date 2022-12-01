@@ -6,9 +6,19 @@ class ArticlesController < ApplicationController
     render json: articles, each_serializer: ArticleListSerializer
   end
 
+
   def show
     article = Article.find(params[:id])
-    render json: article
+    session[:page_views] ||= 0
+    # 2 way of doing the same thing
+    session[:page_views] = session[:page_views] + 1
+    #session[:page_views] += 1
+    if session[:page_views] < 4
+      render json: article
+    else
+      render status: :unauthorized
+    end
+    
   end
 
   private
